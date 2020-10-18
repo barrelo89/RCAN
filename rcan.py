@@ -136,9 +136,9 @@ class RCAN(tf.keras.Model):
         return x
 
 '''
-MINIMIZE L1 LOSS
-'''
+HOW TO USE
 
+#DEFINE THE PARAMETERS
 initial_num_filters = 64
 num_group = 3
 num_block = 3
@@ -148,24 +148,26 @@ up_scale_factor = 2
 reduction_rate = 3
 squeeze_factor = 2
 
+#LOAD THE LOW RESOLUTION AND HIGH RESOLUTION IMAGE DATA SETS
 data = cv2.imread('img.jpg').astype(float)
 small_data = cv2.resize(data, None, fx = 1/up_scale_factor, fy = 1/up_scale_factor)
 
+#CREATE AN RCAN MODEL
 model = RCAN(initial_num_filters, num_group, num_block, kernel_size, scale_factor, up_scale_factor, reduction_rate, squeeze_factor)
 
 optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-4)
 model.compile(optimizer = optimizer, loss = tf.keras.losses.MeanAbsoluteError())
 
+#TRAIN
 model.fit(small_data[np.newaxis, ...], data[np.newaxis, ...], epochs = 1000)
 
+#PREDICTION
 result = model.predict(small_data[np.newaxis, ...])
 result = tf.cast(result, tf.uint8)
 
 cv2.imshow('img', result.numpy()[0, :, :, :])
 cv2.waitKey(0)
-
-
-
+'''
 
 
 
